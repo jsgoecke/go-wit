@@ -26,7 +26,7 @@ func main() {
 	request = &wit.MessageRequest{}
 	request.File = "../audio_sample/helloWorld.wav"
 	request.ContentType = "audio/wav;rate=8000"
-	result, err = client.PostAudioMessage(request)
+	result, err = client.AudioMessage(request)
 	if err != nil {
 		println(err)
 		os.Exit(-1)

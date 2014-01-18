@@ -84,7 +84,7 @@ func TestWitPostAudioMessage(t *testing.T) {
 	request := &MessageRequest{}
 	request.File = "./audio_sample/helloWorld.wav"
 	request.ContentType = "audio/wav;rate=8000"
-	message, err := client.PostAudioMessage(request)
+	message, err := client.AudioMessage(request)
 	if err != nil {
 		t.Error(err)
 	} else {

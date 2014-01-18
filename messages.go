@@ -96,8 +96,8 @@ func (client *WitClient) Message(request *MessageRequest) (*Message, error) {
 // 		request := &MessageRequest{}
 // 		request.File = "./audio_sample/helloWorld.wav"
 //		request.ContentType = "audio/wav;rate=8000"
-// 		message, err := client.PostAudioMessage(request)
-func (client *WitClient) PostAudioMessage(request *MessageRequest) (*Message, error) {
+// 		message, err := client.AudioMessage(request)
+func (client *WitClient) AudioMessage(request *MessageRequest) (*Message, error) {
 	result, statusCode, err := postFile(client.ApiBase+"/speech", request)
 	if err != nil {
 	}
