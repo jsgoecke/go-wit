@@ -4,6 +4,7 @@
 package wit
 
 import (
+	// "log"
 	"os"
 	"testing"
 )
@@ -146,19 +147,21 @@ func TestUpdateEntity(t *testing.T) {
 }
 
 func TestCreateEntityValue(t *testing.T) {
-	data := `
-	{
-	  {
-	    "value": "Paris",
-	    "expressions": ["Paris", "City of Light", "Capital of France"]
-	  }
-	}`
-
-	_, err := parseEntityValue([]byte(data))
+	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
+	entityValue := &EntityValue{}
+	entityValue.Value = "Barcelona"
+	entityValue.Expressions = []string{"Med", "Sagrada Familia", "Gaudi"}
+	entity, err := client.CreateEntityValue("favorite_city", entityValue)
 	if err != nil {
-		t.Error("Did not parse entity value properly")
+		t.Error(err)
 	}
-	// client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
+	if entity.Values[0].Value != "Barcelona" {
+		t.Error("Did not add Barcelona to entity's value properly")
+	}
+	if entity.Values[0].Expressions[1] != "Sagrada Familia" {
+		t.Error("Did not add Sagrada Familia to entity's value expression properly")
+	}
+
 }
 
 func TestDeleteEntityValue(t *testing.T) {

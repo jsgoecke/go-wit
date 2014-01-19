@@ -41,6 +41,23 @@ func (client *WitClient) CreateEntity(entity *Entity) ([]byte, error) {
 	return result, nil
 }
 
+// Creates a new entity value (https://wit.ai/docs/api#toc_25)
+//
+//		result, err := client.CreateEntityValue("favorite_city, entityValue)
+func (client *WitClient) CreateEntityValue(id string, entityValue *EntityValue) (*Entity, error) {
+	data, err := json.Marshal(entityValue)
+	result, statusCode, err := post(client.ApiBase+"/entities/"+id+"/values", data)
+	if statusCode != 200 {
+		return nil, err
+	}
+	entity := &Entity{}
+	err = json.Unmarshal(result, entity)
+	if err != nil {
+		return nil, err
+	}
+	return entity, nil
+}
+
 // Deletes an entity (https://wit.ai/docs/api#toc_30)
 //
 //		result, err := client.DeleteEntity("favorite_city")
@@ -63,7 +80,7 @@ func (client *WitClient) DeleteEntityValue(id string, value string) ([]byte, err
 	return result, nil
 }
 
-// Deletes an entity's value (https://wit.ai/docs/api#toc_35)
+// Deletes an entity's value's expression (https://wit.ai/docs/api#toc_35)
 //
 // 		result, err := client.DeleteEntityValueExp("favorite_city", "Paris", "")
 func (client *WitClient) DeleteEntityValueExp(id string, value string, exp string) ([]byte, error) {
