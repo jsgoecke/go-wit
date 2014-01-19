@@ -4,7 +4,6 @@
 package wit
 
 import (
-	// "log"
 	"os"
 	"testing"
 )
@@ -161,7 +160,20 @@ func TestCreateEntityValue(t *testing.T) {
 	if entity.Values[0].Expressions[1] != "Sagrada Familia" {
 		t.Error("Did not add Sagrada Familia to entity's value expression properly")
 	}
+}
 
+func TestCreateEntityValueExp(t *testing.T) {
+	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
+	entity, err := client.CreateEntityValueExp("favorite_city", "Barcelona", "Paella")
+	if err != nil {
+		t.Error(err)
+	}
+	if entity.Values[0].Value != "Barcelona" {
+		t.Error("Did not add Barcelona to entity's value properly")
+	}
+	if entity.Values[0].Expressions[2] != "Paella" {
+		t.Error("Did not add Sagrada Familia to entity's value expression properly")
+	}
 }
 
 func TestDeleteEntityValue(t *testing.T) {

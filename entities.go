@@ -1,10 +1,6 @@
 // Copyright (c) 2014 Jason Goecke
 // entities.go
 
-// To be implemented:
-// 	- POST/Create EntityValue
-// 	- POST/Create EntityValueExpression
-
 package wit
 
 import (
@@ -47,6 +43,22 @@ func (client *WitClient) CreateEntity(entity *Entity) ([]byte, error) {
 func (client *WitClient) CreateEntityValue(id string, entityValue *EntityValue) (*Entity, error) {
 	data, err := json.Marshal(entityValue)
 	result, statusCode, err := post(client.ApiBase+"/entities/"+id+"/values", data)
+	if statusCode != 200 {
+		return nil, err
+	}
+	entity := &Entity{}
+	err = json.Unmarshal(result, entity)
+	if err != nil {
+		return nil, err
+	}
+	return entity, nil
+}
+
+// Creates a new entity value expression (https://wit.ai/docs/api#toc_25)
+//
+//		result, err := client.CreateEntityValueExp("favorite_city", "Barcelona", "Paella")
+func (client *WitClient) CreateEntityValueExp(id string, value string, exp string) (*Entity, error) {
+	result, statusCode, err := post(client.ApiBase+"/entities/"+id+"/values/"+value+"/expressions", []byte(exp))
 	if statusCode != 200 {
 		return nil, err
 	}
