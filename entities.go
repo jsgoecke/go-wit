@@ -2,8 +2,8 @@
 // entities.go
 
 // To be implemented:
+// 	- POST/Create EntityValue
 // 	- POST/Create EntityValueExpression
-//	- DELETE EntityValueExpress
 
 package wit
 
