@@ -169,6 +169,14 @@ func TestDeleteEntityValue(t *testing.T) {
 	}
 }
 
+func TestDeleteEntityValueExp(t *testing.T) {
+	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
+	_, err := client.DeleteEntityValueExp("favorite_city", "Paris", "City of Light")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
 func TestDeleteEntity(t *testing.T) {
 	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
 	_, err := client.DeleteEntity("favorite_city")

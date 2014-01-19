@@ -45,7 +45,6 @@ func NewClient(apiKey string) *WitClient {
 //		result, err := delete("https://api.wit.ai/entities", "favorite_city")
 func delete(resource string, id string) ([]byte, int, error) {
 	httpParams := &HttpParams{}
-	httpParams.ContentType = "application/json"
 	httpParams.Resource = resource + "/" + id
 	httpParams.Verb = "DELETE"
 	return processRequest(httpParams)
@@ -56,7 +55,6 @@ func delete(resource string, id string) ([]byte, int, error) {
 //		result, err := get("https://api.wit.ai/entities/favorite_city")
 func get(resource string) ([]byte, int, error) {
 	httpParams := &HttpParams{}
-	httpParams.ContentType = "application/json"
 	httpParams.Resource = resource
 	httpParams.Verb = "GET"
 	return processRequest(httpParams)

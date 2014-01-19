@@ -9,6 +9,7 @@ package wit
 
 import (
 	"encoding/json"
+	"net/url"
 )
 
 // Represents an Entity for the Wit API (https://wit.ai/docs/api#toc_15)
@@ -55,7 +56,19 @@ func (client *WitClient) DeleteEntity(id string) ([]byte, error) {
 //
 // 		result, err := client.DeleteEntityValue("favorite_city", "Paris")
 func (client *WitClient) DeleteEntityValue(id string, value string) ([]byte, error) {
-	result, statusCode, err := delete(client.ApiBase+"/entities/", id+"/"+value)
+	result, statusCode, err := delete(client.ApiBase+"/entities/", id+"/values/"+value)
+	if statusCode != 200 {
+		return nil, err
+	}
+	return result, nil
+}
+
+// Deletes an entity's value (https://wit.ai/docs/api#toc_35)
+//
+// 		result, err := client.DeleteEntityValueExp("favorite_city", "Paris", "")
+func (client *WitClient) DeleteEntityValueExp(id string, value string, exp string) ([]byte, error) {
+	data := id + "/values/" + value + "/expression/" + url.QueryEscape(exp)
+	result, statusCode, err := delete(client.ApiBase+"/entities/", data)
 	if statusCode != 200 {
 		return nil, err
 	}
