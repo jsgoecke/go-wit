@@ -5,6 +5,8 @@ package wit
 
 import (
 	"encoding/json"
+	"errors"
+	"log"
 	"net/url"
 )
 
@@ -25,16 +27,25 @@ type EntityValue struct {
 // Represents a slice of entites when returend as an array (https://wit.ai/docs/api#toc_15)
 type Entities []string
 
+// This may only be necessary temporarily
+type EntityResult struct {
+	Id      string `json:"id"`
+	Version int    `json:"version"`
+	Doc     string `json:"doc"`
+}
+
 // Creates a new entity (https://wit.ai/docs/api#toc_19)
 //
 //		result, err := client.CreateEntity(entity)
-func (client *WitClient) CreateEntity(entity *Entity) ([]byte, error) {
+func (client *WitClient) CreateEntity(entity *Entity) (*EntityResult, error) {
 	data, err := json.Marshal(entity)
 	result, statusCode, err := post(client.ApiBase+"/entities", data)
 	if statusCode != 200 {
 		return nil, err
 	}
-	return result, nil
+	entityResult := &EntityResult{}
+	err = json.Unmarshal(result, entityResult)
+	return entityResult, nil
 }
 
 // Creates a new entity value (https://wit.ai/docs/api#toc_25)
@@ -74,9 +85,14 @@ func (client *WitClient) CreateEntityValueExp(id string, value string, exp strin
 //
 //		result, err := client.DeleteEntity("favorite_city")
 func (client *WitClient) DeleteEntity(id string) ([]byte, error) {
+	id = url.QueryEscape(id)
 	result, statusCode, err := delete(client.ApiBase+"/entities/", id)
-	if statusCode != 200 {
+	if err != nil {
 		return nil, err
+	}
+	if statusCode != 200 {
+		log.Println(statusCode)
+		return nil, errors.New("Entity not found")
 	}
 	return result, nil
 }
@@ -85,6 +101,7 @@ func (client *WitClient) DeleteEntity(id string) ([]byte, error) {
 //
 // 		result, err := client.DeleteEntityValue("favorite_city", "Paris")
 func (client *WitClient) DeleteEntityValue(id string, value string) ([]byte, error) {
+	id = url.QueryEscape(id)
 	result, statusCode, err := delete(client.ApiBase+"/entities/", id+"/values/"+value)
 	if statusCode != 200 {
 		return nil, err
@@ -96,6 +113,7 @@ func (client *WitClient) DeleteEntityValue(id string, value string) ([]byte, err
 //
 // 		result, err := client.DeleteEntityValueExp("favorite_city", "Paris", "")
 func (client *WitClient) DeleteEntityValueExp(id string, value string, exp string) ([]byte, error) {
+	id = url.QueryEscape(id)
 	data := id + "/values/" + value + "/expression/" + url.QueryEscape(exp)
 	result, statusCode, err := delete(client.ApiBase+"/entities/", data)
 	if statusCode != 200 {
@@ -120,11 +138,18 @@ func (client *WitClient) Entities() (*Entities, error) {
 //
 //		result, err := client.Entity("wit$temperature")
 func (client *WitClient) Entity(id string) (*Entity, error) {
-	result, _, err := get(client.ApiBase + "/entities/" + id)
+	id = url.QueryEscape(id)
+	result, statusCode, err := get(client.ApiBase + "/entities/" + id)
 	if err != nil {
 		return nil, err
 	}
-	entity, _ := parseEntity(result)
+	if statusCode != 200 {
+		return nil, errors.New("Entity not found")
+	}
+	entity, err := parseEntity(result)
+	if err != nil {
+		return nil, err
+	}
 	return entity, nil
 }
 

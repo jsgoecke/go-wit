@@ -4,9 +4,12 @@
 package wit
 
 import (
+	"log"
 	"os"
 	"testing"
 )
+
+var entityId string
 
 func TestWitEntitiesParsing(t *testing.T) {
 	data := `
@@ -86,11 +89,17 @@ func TestWitEntity(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-
 	if entity.Id != "wit$age_of_person" ||
 		entity.Builtin != true {
 		t.Error("Did not parse entity properly")
 	}
+
+	// Now test for when the entity is not present
+	_, err = client.Entity("age_of_person")
+	if err.Error() != "Entity not found" {
+		t.Error("Should have returned a not found error")
+	}
+
 }
 
 func TestCreateEntity(t *testing.T) {
@@ -111,10 +120,13 @@ func TestCreateEntity(t *testing.T) {
 	if err != nil {
 		t.Error("Did not parse entity properly")
 	}
-	_, err = client.CreateEntity(entity)
+	entityResult, err := client.CreateEntity(entity)
 	if err != nil {
 		t.Error("Did not create entity properly")
 	}
+	// Need to figure out what gets returned
+	entityId = entityResult.Id
+	t.Error("Question on return of the results and its format")
 }
 
 func TestUpdateEntity(t *testing.T) {
@@ -195,7 +207,15 @@ func TestDeleteEntityValueExp(t *testing.T) {
 func TestDeleteEntity(t *testing.T) {
 	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
 	_, err := client.DeleteEntity("favorite_city")
-	if err != nil {
-		t.Error("Did not delete entity properly")
+	if err.Error() != "Entity not found" {
+		t.Error("Delete should have returned 'Entity not found'")
 	}
+
+	log.Println(entityId)
+	result, err := client.DeleteEntity(entityId)
+	log.Println(result)
+	log.Println(err)
+	// if result != "" {
+	// 	t.Error("Delete returned an unexpected value")
+	// }
 }
