@@ -1,4 +1,5 @@
-#go-wit ![Build Status](https://circleci.com/gh/jsgoecke/go-wit.png?circle-token=65edabe8b922ecbcb3e22fbb83375b9a44ef678d)
+#go-wit 
+[![Build Status](https://drone.io/github.com/jsgoecke/go-wit/status.png)](https://drone.io/github.com/jsgoecke/go-wit/latest)
 
 A Go library for the [Wit.ai](http://wit.ai) API for Natural Language Processing.
 
