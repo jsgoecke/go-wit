@@ -19,7 +19,7 @@ type Intents []struct {
 //
 //		result, err := client.Intents()
 func (client *WitClient) Intents() (*Intents, error) {
-	result, _, err := get(client.ApiBase + "/intents")
+	result, err := get(client.ApiBase + "/intents")
 	if err != nil {
 		return nil, err
 	}

@@ -5,6 +5,7 @@ package wit
 
 import (
 	"bytes"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -43,9 +44,21 @@ func NewClient(apiKey string) *WitClient {
 // Provides a common facility for doing a DELETE on a Wit resource
 //
 //		result, err := delete("https://api.wit.ai/entities", "favorite_city")
-func delete(resource string, id string) ([]byte, int, error) {
+func delete(resource string, id string) ([]byte, error) {
 	httpParams := &HttpParams{}
 	httpParams.Resource = resource + "/" + id
+	httpParams.Verb = "DELETE"
+	return processRequest(httpParams)
+}
+
+// Provides a common facility for doing a DELETE on a Wit resource
+//
+//		result, err := delete("https://api.wit.ai/entities", "favorite_city")
+func deleteWithBody(resource string, id string, body string) ([]byte, error) {
+	httpParams := &HttpParams{}
+	httpParams.Resource = resource + "/" + id
+	httpParams.Data = []byte(body)
+	httpParams.ContentType = "text/plain"
 	httpParams.Verb = "DELETE"
 	return processRequest(httpParams)
 }
@@ -53,7 +66,7 @@ func delete(resource string, id string) ([]byte, int, error) {
 // Provides a common facility for doing a GET on a Wit resource
 //
 //		result, err := get("https://api.wit.ai/entities/favorite_city")
-func get(resource string) ([]byte, int, error) {
+func get(resource string) ([]byte, error) {
 	httpParams := &HttpParams{}
 	httpParams.Resource = resource
 	httpParams.Verb = "GET"
@@ -64,7 +77,7 @@ func get(resource string) ([]byte, int, error) {
 // JSON []byte for the data argument.
 //
 //		result, err := post("https://api.wit.ai/entities", entity)
-func post(resource string, data []byte) ([]byte, int, error) {
+func post(resource string, data []byte) ([]byte, error) {
 	httpParams := &HttpParams{"POST", resource, "application/json", data}
 	return processRequest(httpParams)
 }
@@ -72,16 +85,16 @@ func post(resource string, data []byte) ([]byte, int, error) {
 // Provides a common facility for doing a POST with a file on a Wit resource.
 //
 //		result, err := postFile("https://api.wit.ai/messages", message)
-func postFile(resource string, request *MessageRequest) ([]byte, int, error) {
+func postFile(resource string, request *MessageRequest) ([]byte, error) {
 	file, err := os.Open(request.File)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 	defer file.Close()
 
 	stats, statsErr := file.Stat()
 	if statsErr != nil {
-		return nil, 0, statsErr
+		return nil, statsErr
 	}
 	var size int64 = stats.Size()
 	data := make([]byte, size)
@@ -94,27 +107,30 @@ func postFile(resource string, request *MessageRequest) ([]byte, int, error) {
 // Provides a common facility for doing a PUT on a Wit resource.
 //
 //		result, err := put("https://api.wit.ai/entities", entity)
-func put(resource string, data []byte) ([]byte, int, error) {
+func put(resource string, data []byte) ([]byte, error) {
 	httpParams := &HttpParams{"PUT", resource, "application/json", data}
 	return processRequest(httpParams)
 }
 
 // Processes an HTTP request to the Wit API
-func processRequest(httpParams *HttpParams) ([]byte, int, error) {
+func processRequest(httpParams *HttpParams) ([]byte, error) {
 	reader := bytes.NewReader(httpParams.Data)
 	httpClient := &http.Client{}
 	req, err := http.NewRequest(httpParams.Verb, httpParams.Resource, reader)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 	setHeaders(req, httpParams.ContentType)
 	result, err := httpClient.Do(req)
 	if err != nil {
-		return nil, result.StatusCode, err
+		return nil, err
 	}
 	body, err := ioutil.ReadAll(result.Body)
 	result.Body.Close()
-	return body, result.StatusCode, nil
+	if result.StatusCode != 200 {
+		return nil, errors.New(http.StatusText(result.StatusCode))
+	}
+	return body, nil
 }
 
 // Sets the custom headers required for the Wit.ai API

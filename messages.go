@@ -5,7 +5,6 @@ package wit
 
 import (
 	"encoding/json"
-	"errors"
 	"net/url"
 )
 
@@ -65,12 +64,9 @@ type Context struct {
 //
 //		result, err := client.Messages("ba0fcf60-44d3-4499-877e-c8d65c239730")
 func (client *WitClient) Messages(id string) (*Message, error) {
-	result, statusCode, err := get(client.ApiBase + "/messages/" + id)
+	result, err := get(client.ApiBase + "/messages/" + id)
 	if err != nil {
 		return nil, err
-	}
-	if statusCode != 200 {
-		return nil, errors.New(string(result[:]))
 	}
 	message, err := parseMessage(result)
 	return message, nil
@@ -80,12 +76,9 @@ func (client *WitClient) Messages(id string) (*Message, error) {
 //
 //		result, err := client.Message(request)
 func (client *WitClient) Message(request *MessageRequest) (*Message, error) {
-	result, statusCode, err := get(client.ApiBase + "/message?q=" + url.QueryEscape(request.Query))
+	result, err := get(client.ApiBase + "/message?q=" + url.QueryEscape(request.Query))
 	if err != nil {
 		return nil, err
-	}
-	if statusCode != 200 {
-		return nil, errors.New(string(result[:]))
 	}
 	message, _ := parseMessage(result)
 	return message, nil
@@ -98,11 +91,8 @@ func (client *WitClient) Message(request *MessageRequest) (*Message, error) {
 //		request.ContentType = "audio/wav;rate=8000"
 // 		message, err := client.AudioMessage(request)
 func (client *WitClient) AudioMessage(request *MessageRequest) (*Message, error) {
-	result, statusCode, err := postFile(client.ApiBase+"/speech", request)
+	result, err := postFile(client.ApiBase+"/speech", request)
 	if err != nil {
-	}
-	if statusCode != 200 {
-		return nil, errors.New(string(result[:]))
 	}
 	message, err := parseMessage(result)
 	if err != nil {
