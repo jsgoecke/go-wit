@@ -51,18 +51,6 @@ func delete(resource string, id string) ([]byte, error) {
 	return processRequest(httpParams)
 }
 
-// Provides a common facility for doing a DELETE on a Wit resource
-//
-//		result, err := delete("https://api.wit.ai/entities", "favorite_city")
-func deleteWithBody(resource string, id string, body string) ([]byte, error) {
-	httpParams := &HttpParams{}
-	httpParams.Resource = resource + "/" + id
-	httpParams.Data = []byte(body)
-	httpParams.ContentType = "text/plain"
-	httpParams.Verb = "DELETE"
-	return processRequest(httpParams)
-}
-
 // Provides a common facility for doing a GET on a Wit resource
 //
 //		result, err := get("https://api.wit.ai/entities/favorite_city")

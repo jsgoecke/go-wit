@@ -6,6 +6,7 @@ package wit
 import (
 	"encoding/json"
 	"net/url"
+	"strings"
 )
 
 // Represents an Entity for the Wit API (https://wit.ai/docs/api#toc_15)
@@ -22,6 +23,10 @@ type EntityValue struct {
 	Expressions []string `json:"expressions"`
 }
 
+type Expression struct {
+	Expression string `json:"expression"`
+}
+
 // Represents a slice of entites when returend as an array (https://wit.ai/docs/api#toc_15)
 type Entities []string
 
@@ -29,7 +34,7 @@ type Entities []string
 //
 //		result, err := client.CreateEntity(entity)
 func (client *WitClient) CreateEntity(entity *Entity) (*Entity, error) {
-	data, err := json.Marshal(entity)
+	data, _ := json.Marshal(entity)
 	result, err := post(client.ApiBase+"/entities", data)
 	if err != nil {
 		return nil, err
@@ -43,7 +48,7 @@ func (client *WitClient) CreateEntity(entity *Entity) (*Entity, error) {
 //
 //		result, err := client.CreateEntityValue("favorite_city, entityValue)
 func (client *WitClient) CreateEntityValue(id string, entityValue *EntityValue) (*Entity, error) {
-	data, err := json.Marshal(entityValue)
+	data, _ := json.Marshal(entityValue)
 	result, err := post(client.ApiBase+"/entities/"+id+"/values", data)
 	if err != nil {
 		return nil, err
@@ -60,7 +65,8 @@ func (client *WitClient) CreateEntityValue(id string, entityValue *EntityValue) 
 //
 //		result, err := client.CreateEntityValueExp("favorite_city", "Barcelona", "Paella")
 func (client *WitClient) CreateEntityValueExp(id string, value string, exp string) (*Entity, error) {
-	result, err := post(client.ApiBase+"/entities/"+id+"/values/"+value+"/expressions", []byte(exp))
+	jsonData, _ := json.Marshal(&Expression{exp})
+	result, err := post(client.ApiBase+"/entities/"+id+"/values/"+value+"/expressions", jsonData)
 	if err != nil {
 		return nil, err
 	}
@@ -101,8 +107,8 @@ func (client *WitClient) DeleteEntityValue(id string, value string) ([]byte, err
 // 		result, err := client.DeleteEntityValueExp("favorite_city", "Paris", "")
 func (client *WitClient) DeleteEntityValueExp(id string, value string, exp string) ([]byte, error) {
 	id = url.QueryEscape(id)
-	data := id + "/values/" + value + "/expressions/"
-	result, err := deleteWithBody(client.ApiBase+"/entities", data, exp)
+	exp = strings.Replace(url.QueryEscape(exp), "+", "%20", -1)
+	result, err := delete(client.ApiBase+"/entities", id+"/values/"+value+"/expressions/"+exp)
 	if err != nil {
 		return nil, err
 	}
