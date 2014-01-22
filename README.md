@@ -11,8 +11,6 @@ Installation
 Documentation
 -------------
 
-This will be available once the Github project is public:
-
 [http://godoc.org/github.com/jsgoecke/go-wit](http://godoc.org/github.com/jsgoecke/go-wit)
 
 Usage
