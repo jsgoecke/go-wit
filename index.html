@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Go-wit by jsgoecke</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Go-wit</h1>
+        <p>Go library for the Wit.ai API for Natural Language Processing</p>
+
+        <p class="view"><a href="https://github.com/jsgoecke/go-wit">View the Project on GitHub <small>jsgoecke/go-wit</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/jsgoecke/go-wit/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/jsgoecke/go-wit/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/jsgoecke/go-wit">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="go-wit" class="anchor" href="#go-wit"><span class="octicon octicon-link"></span></a>go-wit</h1>
+
+<p><a href="https://app.wercker.com/project/bykey/db550f8016d3e02bd1d79d94bccf764b"><img src="https://app.wercker.com/status/db550f8016d3e02bd1d79d94bccf764b/m" alt="wercker status" title="wercker status"></a></p>
+
+<p>A Go library for the <a href="http://wit.ai">Wit.ai</a> API for Natural Language Processing.</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<pre><code>go get github.com/jsgoecke/go-wit
+</code></pre>
+
+<h2>
+<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
+
+<p>This will be available once the Github project is public:</p>
+
+<p><a href="http://godoc.org/github.com/jsgoecke/go-wit">http://godoc.org/github.com/jsgoecke/go-wit</a></p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<div class="highlight highlight-go"><pre><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">"github.com/jsgoecke/go-wit"</span>
+    <span class="s">"encoding/json"</span>
+    <span class="s">"log"</span>
+    <span class="s">"os"</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">client</span> <span class="o">:=</span> <span class="nx">wit</span><span class="p">.</span><span class="nx">NewClient</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">"WIT_ACCESS_TOKEN"</span><span class="p">))</span>
+
+    <span class="c1">// Process a text message</span>
+    <span class="nx">request</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">wit</span><span class="p">.</span><span class="nx">MessageRequest</span><span class="p">{}</span>
+    <span class="nx">request</span><span class="p">.</span><span class="nx">Query</span> <span class="p">=</span> <span class="s">"Hello world"</span>
+    <span class="nx">result</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nx">Message</span><span class="p">(</span><span class="nx">request</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nb">println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+        <span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+    <span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">MarshalIndent</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">"    "</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">[:]))</span>
+
+    <span class="c1">// Process an audio/wav message</span>
+    <span class="nx">request</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">wit</span><span class="p">.</span><span class="nx">MessageRequest</span><span class="p">{}</span>
+    <span class="nx">request</span><span class="p">.</span><span class="nx">File</span> <span class="p">=</span> <span class="s">"../audio_sample/helloWorld.wav"</span>
+    <span class="nx">request</span><span class="p">.</span><span class="nx">ContentType</span> <span class="p">=</span> <span class="s">"audio/wav;rate=8000"</span>
+    <span class="nx">result</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">client</span><span class="p">.</span><span class="nx">AudioMessage</span><span class="p">(</span><span class="nx">request</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nb">println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+        <span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+    <span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">MarshalIndent</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">"    "</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">[:]))</span>
+<span class="p">}</span>
+
+<span class="c1">// Output:</span>
+
+<span class="c1">// structs:</span>
+<span class="c1">// &amp;{bf699a8f-bc90-4fb4-a715-bd8bd77749db Hello world {hello {{ } []} 0.996}}</span>
+<span class="c1">// &amp;{54ed4e6d-0653-453e-8c0c-81da57c3846c hello world {hello {{ } []} 0.993}}</span>
+
+<span class="c1">// json:</span>
+<span class="c1">// {</span>
+<span class="c1">//     "msg_id": "76f1c370-bd92-417f-8cb3-e1419d1a9cb3",</span>
+<span class="c1">//     "msg_body": "Hello world",</span>
+<span class="c1">//     "outcome": {</span>
+<span class="c1">//         "intent": "hello",</span>
+<span class="c1">//         "entities": {</span>
+<span class="c1">//             "metric": {},</span>
+<span class="c1">//             "datetime": null</span>
+<span class="c1">//         },</span>
+<span class="c1">//         "confidence": 0.996</span>
+<span class="c1">//     }</span>
+<span class="c1">// }</span>
+<span class="c1">// {</span>
+<span class="c1">//     "msg_id": "322f9b61-0f75-4953-a392-f8eca058a12f",</span>
+<span class="c1">//     "msg_body": "hello world",</span>
+<span class="c1">//     "outcome": {</span>
+<span class="c1">//         "intent": "hello",</span>
+<span class="c1">//         "entities": {</span>
+<span class="c1">//             "metric": {},</span>
+<span class="c1">//             "datetime": null</span>
+<span class="c1">//         },</span>
+<span class="c1">//         "confidence": 0.993</span>
+<span class="c1">//     }</span>
+<span class="c1">// }</span>
+</pre></div>
+
+<h2>
+<a name="testing" class="anchor" href="#testing"><span class="octicon octicon-link"></span></a>Testing</h2>
+
+<p>Must have the environment variable WIT_ACCESS_TOKEN set to your Wit API token.</p>
+
+<pre><code>go test
+</code></pre>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>MIT, see LICENSE.txt</p>
+
+<h2>
+<a name="author" class="anchor" href="#author"><span class="octicon octicon-link"></span></a>Author</h2>
+
+<p>Jason Goecke <a href="http://twitter.com/jsgoecke">@jsgoecke</a>.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/jsgoecke">jsgoecke</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-47274174-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
