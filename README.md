@@ -1,5 +1,5 @@
 #go-wit 
-[![Build Status](https://drone.io/github.com/jsgoecke/go-wit/status.png)](https://drone.io/github.com/jsgoecke/go-wit/latest)
+[![wercker status](https://app.wercker.com/status/db550f8016d3e02bd1d79d94bccf764b "wercker status")](https://app.wercker.com/project/bykey/db550f8016d3e02bd1d79d94bccf764b)
 
 A Go library for the [Wit.ai](http://wit.ai) API for Natural Language Processing.
 
