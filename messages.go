@@ -49,6 +49,7 @@ type DatetimeValue struct {
 // Represents a request to process a message
 type MessageRequest struct {
 	File, Query, MsgId, ContentType string
+	FileContents                    []byte
 	// Are context and Meta necessary anymore?
 	// Context     Context
 	// Meta        map[string]interface{}
@@ -88,6 +89,7 @@ func (client *WitClient) Message(request *MessageRequest) (*Message, error) {
 //
 // 		request := &MessageRequest{}
 // 		request.File = "./audio_sample/helloWorld.wav"
+//		request.FileContents = data
 //		request.ContentType = "audio/wav;rate=8000"
 // 		message, err := client.AudioMessage(request)
 func (client *WitClient) AudioMessage(request *MessageRequest) (*Message, error) {

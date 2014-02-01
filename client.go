@@ -74,22 +74,29 @@ func post(resource string, data []byte) ([]byte, error) {
 //
 //		result, err := postFile("https://api.wit.ai/messages", message)
 func postFile(resource string, request *MessageRequest) ([]byte, error) {
-	file, err := os.Open(request.File)
-	if err != nil {
-		return nil, err
+	if request.File != "" {
+		file, err := os.Open(request.File)
+		if err != nil {
+			return nil, err
+		}
+		defer file.Close()
+		stats, statsErr := file.Stat()
+		if statsErr != nil {
+			return nil, statsErr
+		}
+		var size int64 = stats.Size()
+		data := make([]byte, size)
+		file.Read(data)
+		httpParams := &HttpParams{"POST", resource, request.ContentType, data}
+		return processRequest(httpParams)
+	} else {
+		if request.FileContents != nil {
+			httpParams := &HttpParams{"POST", resource, request.ContentType, request.FileContents}
+			return processRequest(httpParams)
+		} else {
+			return nil, errors.New("Must provide a filename or contents")
+		}
 	}
-	defer file.Close()
-
-	stats, statsErr := file.Stat()
-	if statsErr != nil {
-		return nil, statsErr
-	}
-	var size int64 = stats.Size()
-	data := make([]byte, size)
-
-	file.Read(data)
-	httpParams := &HttpParams{"POST", resource, request.ContentType, data}
-	return processRequest(httpParams)
 }
 
 // Provides a common facility for doing a PUT on a Wit resource.
