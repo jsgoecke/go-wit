@@ -95,6 +95,7 @@ func (client *WitClient) Message(request *MessageRequest) (*Message, error) {
 func (client *WitClient) AudioMessage(request *MessageRequest) (*Message, error) {
 	result, err := postFile(client.ApiBase+"/speech", request)
 	if err != nil {
+		return nil, err
 	}
 	message, err := parseMessage(result)
 	if err != nil {
