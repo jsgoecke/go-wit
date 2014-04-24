@@ -4,6 +4,7 @@
 package wit
 
 import (
+	"fmt"
 	"math/rand"
 	"net/http"
 	"os"
@@ -13,23 +14,22 @@ import (
 
 var entityName string
 
-func findEntityValue(e *Entity, v string)(value EntityValue) {
-	for _, val := range (*e).Values {
+func findEntityValue(e *Entity, v string) (value EntityValue, err error) {
+	for _, val := range e.Values {
 		if val.Value == v {
-			value = val
+			return val, nil
 		}
 	}
-	return value
+	return value, fmt.Errorf("not found")
 }
 
-func findStringInArray(a []string, v string)(b bool) {
-	b = false
+func findStringInArray(a []string, v string) (s string, err error) {
 	for _, val := range a {
 		if val == v {
-			b = true
+			return val, nil
 		}
 	}
-	return b
+	return s, fmt.Errorf("not found")
 }
 
 func TestWitEntitiesParsing(t *testing.T) {
@@ -199,11 +199,13 @@ func TestCreateEntityValue(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	barcelona := findEntityValue(entity, "Barcelona")
-	if barcelona.Value != "Barcelona" {
+	barcelona, err := findEntityValue(entity, "Barcelona")
+	if err != nil ||
+		barcelona.Value != "Barcelona" {
 		t.Error("Did not add Barcelona to entity's value properly")
 	}
-	if !findStringInArray(barcelona.Expressions, "Sagrada Familia") {
+	_, err = findStringInArray(barcelona.Expressions, "Sagrada Familia")
+	if err != nil {
 		t.Error("Did not add Sagrada Familia to entity's value expression properly")
 	}
 }
@@ -214,11 +216,12 @@ func TestCreateEntityValueExp(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	barcelona := findEntityValue(entity, "Barcelona")
-	if barcelona.Value != "Barcelona" {
+	barcelona, err := findEntityValue(entity, "Barcelona")
+	if err != nil || barcelona.Value != "Barcelona" {
 		t.Error("Did not add Barcelona to entity's value properly")
 	}
-	if !findStringInArray(barcelona.Expressions, "Paella") {
+	_, err = findStringInArray(barcelona.Expressions, "Paella")
+	if err != nil {
 		t.Error("Did not add Sagrada Familia to entity's value expression properly")
 	}
 }

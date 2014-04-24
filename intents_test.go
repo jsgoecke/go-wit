@@ -48,8 +48,9 @@ func TestWitIntentsParsing(t *testing.T) {
 	}
 }
 
-//good_bye is not a mandatory intent anymore. Wit.ai will soon add a Post /intent to add new intent, then this test can be used
-	
+// temporary: the "good_bye" intent is not added to new instances anymore.
+// Wit.AI will soon add a POST /intent endpoint to add new intents, uncomment this test then.
+
 // func TestWitIntents(t *testing.T) {
 // 	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
 // 	intents, err := client.Intents()

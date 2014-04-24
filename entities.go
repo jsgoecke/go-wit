@@ -14,7 +14,7 @@ type Entity struct {
 	Builtin bool          `json:"builtin"`
 	Doc     string        `json:"doc"`
 	Id      string        `json:"id"`
-	Name	string 		  `json:"name"`
+	Name    string        `json:"name"`
 	Values  []EntityValue `json:"values"`
 }
 
