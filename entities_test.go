@@ -4,7 +4,6 @@
 package wit
 
 import (
-	"fmt"
 	"math/rand"
 	"net/http"
 	"os"
@@ -14,22 +13,22 @@ import (
 
 var entityName string
 
-func findEntityValue(e *Entity, v string) (value EntityValue, err error) {
+func findEntityValue(e *Entity, v string) (value EntityValue, b bool) {
 	for _, val := range e.Values {
 		if val.Value == v {
-			return val, nil
+			return val, true
 		}
 	}
-	return value, fmt.Errorf("not found")
+	return value, false
 }
 
-func findStringInArray(a []string, v string) (s string, err error) {
+func findStringInArray(a []string, v string) (s string, b bool) {
 	for _, val := range a {
 		if val == v {
-			return val, nil
+			return val, true
 		}
 	}
-	return s, fmt.Errorf("not found")
+	return s, false
 }
 
 func TestWitEntitiesParsing(t *testing.T) {
@@ -199,13 +198,12 @@ func TestCreateEntityValue(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	barcelona, err := findEntityValue(entity, "Barcelona")
-	if err != nil ||
-		barcelona.Value != "Barcelona" {
+	barcelona, found := findEntityValue(entity, "Barcelona")
+	if !found || barcelona.Value != "Barcelona" {
 		t.Error("Did not add Barcelona to entity's value properly")
 	}
-	_, err = findStringInArray(barcelona.Expressions, "Sagrada Familia")
-	if err != nil {
+	_, found = findStringInArray(barcelona.Expressions, "Sagrada Familia")
+	if !found {
 		t.Error("Did not add Sagrada Familia to entity's value expression properly")
 	}
 }
@@ -216,12 +214,12 @@ func TestCreateEntityValueExp(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	barcelona, err := findEntityValue(entity, "Barcelona")
-	if err != nil || barcelona.Value != "Barcelona" {
+	barcelona, found := findEntityValue(entity, "Barcelona")
+	if !found || barcelona.Value != "Barcelona" {
 		t.Error("Did not add Barcelona to entity's value properly")
 	}
-	_, err = findStringInArray(barcelona.Expressions, "Paella")
-	if err != nil {
+	_, found = findStringInArray(barcelona.Expressions, "Paella")
+	if !found {
 		t.Error("Did not add Sagrada Familia to entity's value expression properly")
 	}
 }
