@@ -6,7 +6,10 @@ package wit
 import (
 	"os"
 	"testing"
+	"time"
 )
+
+var msg_id string
 
 func TestWitMessageParsing(t *testing.T) {
 	data := `
@@ -53,18 +56,6 @@ func TestWitMessageParsing(t *testing.T) {
 	}
 }
 
-func TestWitMessages(t *testing.T) {
-	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
-	message, err := client.Messages("7c78b1c7-4845-4d69-8bb7-01854fa2b792")
-	if err != nil {
-		t.Error("Message JSON did not parse properly.")
-	} else {
-		if message.MsgId != "7c78b1c7-4845-4d69-8bb7-01854fa2b792" {
-			t.Error("Message JSON did not parse properly.")
-		}
-	}
-}
-
 func TestWitMessageRequest(t *testing.T) {
 	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
 
@@ -77,13 +68,14 @@ func TestWitMessageRequest(t *testing.T) {
 	if result.MsgBody != "Hello world" {
 		t.Error("Did not process properly")
 	}
+	msg_id = result.MsgId
 }
 
 func TestWitPostAudioMessage(t *testing.T) {
 	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
 	request := &MessageRequest{}
 	request.File = "./audio_sample/helloWorld.wav"
-	request.ContentType = "audio/wav;rate=8000"
+	request.ContentType = "audio/wav"
 	message, err := client.AudioMessage(request)
 	if err != nil {
 		t.Error(err)
@@ -110,13 +102,27 @@ func TestWitPostAudioContentsMessage(t *testing.T) {
 	file.Read(data)
 	request := &MessageRequest{}
 	request.FileContents = data
-	request.ContentType = "audio/wav;rate=8000"
+	request.ContentType = "audio/wav"
 	message, err := client.AudioMessage(request)
 	if err != nil {
 		t.Error(err)
 	} else {
 		if message.MsgBody != "hello world" {
 			t.Error("Audio POST did not work properly")
+		}
+	}
+}
+
+func TestWitMessages(t *testing.T) {
+	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
+	//Wait for the message to be indexed
+	time.Sleep(300 * time.Millisecond)
+	message, err := client.Messages(msg_id)
+	if err != nil {
+		t.Error("Message JSON did not parse properly.")
+	} else {
+		if message.MsgId != msg_id {
+			t.Error("Message JSON did not parse properly.")
 		}
 	}
 }

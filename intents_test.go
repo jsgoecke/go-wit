@@ -4,7 +4,7 @@
 package wit
 
 import (
-	"os"
+	//"os"
 	"testing"
 )
 
@@ -48,20 +48,22 @@ func TestWitIntentsParsing(t *testing.T) {
 	}
 }
 
-func TestWitIntents(t *testing.T) {
-	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
-	intents, err := client.Intents()
-	if err != nil {
-		t.Error("Did not fetch intents properly")
-	}
+//good_bye is not a mandatory intent anymore. Wit.ai will soon add a Post /intent to add new intent, then this test can be used
+	
+// func TestWitIntents(t *testing.T) {
+// 	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
+// 	intents, err := client.Intents()
+// 	if err != nil {
+// 		t.Error("Did not fetch intents properly")
+// 	}
 
-	goodBye := false
-	for _, value := range *intents {
-		if value.Name == "good_bye" {
-			goodBye = true
-		}
-	}
-	if goodBye != true {
-		t.Error("Intents returned not expected")
-	}
-}
+// 	goodBye := false
+// 	for _, value := range *intents {
+// 		if value.Name == "good_bye" {
+// 			goodBye = true
+// 		}
+// 	}
+// 	if goodBye != true {
+// 		t.Error("Intents returned not expected")
+// 	}
+// }
