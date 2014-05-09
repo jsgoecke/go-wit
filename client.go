@@ -9,10 +9,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"regexp"
 )
 
 const (
-	USERAGENT = "WIT (Go net/http)"
+	USERAGENT   = "WIT (Go net/http)"
+	API_VERSION = "v=20140401"
 )
 
 // Represents a client for the Wit API (https://wit.ai/docs/api)
@@ -109,6 +111,12 @@ func put(resource string, data []byte) ([]byte, error) {
 
 // Processes an HTTP request to the Wit API
 func processRequest(httpParams *HttpParams) ([]byte, error) {
+	regex := regexp.MustCompile(`\?`)
+	if regex.MatchString(httpParams.Resource) {
+		httpParams.Resource += "&" + API_VERSION
+	} else {
+		httpParams.Resource += "?" + API_VERSION
+	}
 	reader := bytes.NewReader(httpParams.Data)
 	httpClient := &http.Client{}
 	req, err := http.NewRequest(httpParams.Verb, httpParams.Resource, reader)
