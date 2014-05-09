@@ -4,7 +4,7 @@
 package wit
 
 import (
-	"os"
+	//"os"
 	"testing"
 )
 
@@ -48,20 +48,23 @@ func TestWitIntentsParsing(t *testing.T) {
 	}
 }
 
-func TestWitIntents(t *testing.T) {
-	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
-	intents, err := client.Intents()
-	if err != nil {
-		t.Error("Did not fetch intents properly")
-	}
+// temporary: the "good_bye" intent is not added to new instances anymore.
+// Wit.AI will soon add a POST /intent endpoint to add new intents, uncomment this test then.
 
-	goodBye := false
-	for _, value := range *intents {
-		if value.Name == "good_bye" {
-			goodBye = true
-		}
-	}
-	if goodBye != true {
-		t.Error("Intents returned not expected")
-	}
-}
+// func TestWitIntents(t *testing.T) {
+// 	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
+// 	intents, err := client.Intents()
+// 	if err != nil {
+// 		t.Error("Did not fetch intents properly")
+// 	}
+
+// 	goodBye := false
+// 	for _, value := range *intents {
+// 		if value.Name == "good_bye" {
+// 			goodBye = true
+// 		}
+// 	}
+// 	if goodBye != true {
+// 		t.Error("Intents returned not expected")
+// 	}
+// }

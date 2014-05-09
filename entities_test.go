@@ -13,6 +13,24 @@ import (
 
 var entityName string
 
+func findEntityValue(e *Entity, v string) (value EntityValue, b bool) {
+	for _, val := range e.Values {
+		if val.Value == v {
+			return val, true
+		}
+	}
+	return value, false
+}
+
+func findStringInArray(a []string, v string) (s string, b bool) {
+	for _, val := range a {
+		if val == v {
+			return val, true
+		}
+	}
+	return s, false
+}
+
 func TestWitEntitiesParsing(t *testing.T) {
 	data := `
 	[
@@ -91,7 +109,7 @@ func TestWitEntity(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if entity.Id != "wit$age_of_person" ||
+	if entity.Name != "age_of_person" ||
 		entity.Builtin != true {
 		t.Error("Did not parse entity properly")
 	}
@@ -180,10 +198,12 @@ func TestCreateEntityValue(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if entity.Values[2].Value != "Barcelona" {
+	barcelona, found := findEntityValue(entity, "Barcelona")
+	if !found || barcelona.Value != "Barcelona" {
 		t.Error("Did not add Barcelona to entity's value properly")
 	}
-	if entity.Values[2].Expressions[1] != "Sagrada Familia" {
+	_, found = findStringInArray(barcelona.Expressions, "Sagrada Familia")
+	if !found {
 		t.Error("Did not add Sagrada Familia to entity's value expression properly")
 	}
 }
@@ -194,10 +214,12 @@ func TestCreateEntityValueExp(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if entity.Values[2].Value != "Barcelona" {
+	barcelona, found := findEntityValue(entity, "Barcelona")
+	if !found || barcelona.Value != "Barcelona" {
 		t.Error("Did not add Barcelona to entity's value properly")
 	}
-	if entity.Values[2].Expressions[2] != "Paella" {
+	_, found = findStringInArray(barcelona.Expressions, "Paella")
+	if !found {
 		t.Error("Did not add Sagrada Familia to entity's value expression properly")
 	}
 }
