@@ -3,6 +3,11 @@
 
 A Go library for the [Wit.ai](http://wit.ai) API for Natural Language Processing.
 
+Version
+-------
+
+0.3 
+
 Installation
 ------------
 
