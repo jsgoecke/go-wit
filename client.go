@@ -39,8 +39,7 @@ var APIKey string
 //
 //		client := wit.NewClient("<ACCESS-TOKEN>")
 func NewClient(apiKey string) *Client {
-	client := &Client{}
-	client.APIBase = "https://api.wit.ai"
+	client := &Client{APIBase: "https://api.wit.ai"}
 	APIKey = apiKey
 	return client
 }
@@ -49,9 +48,10 @@ func NewClient(apiKey string) *Client {
 //
 //		result, err := delete("https://api.wit.ai/entities", "favorite_city")
 func delete(resource string, id string) ([]byte, error) {
-	httpParams := &HTTPParams{}
-	httpParams.Resource = resource + "/" + id
-	httpParams.Verb = "DELETE"
+	httpParams := &HTTPParams{
+		Resource: resource + "/" + id,
+		Verb:     "DELETE",
+	}
 	return processRequest(httpParams)
 }
 
@@ -59,9 +59,10 @@ func delete(resource string, id string) ([]byte, error) {
 //
 //		result, err := get("https://api.wit.ai/entities/favorite_city")
 func get(resource string) ([]byte, error) {
-	httpParams := &HTTPParams{}
-	httpParams.Resource = resource
-	httpParams.Verb = "GET"
+	httpParams := &HTTPParams{
+		Resource: resource,
+		Verb:     "GET",
+	}
 	return processRequest(httpParams)
 }
 
