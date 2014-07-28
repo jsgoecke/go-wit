@@ -9,34 +9,35 @@ import (
 	"strings"
 )
 
-// Represents an Entity for the Wit API (https://wit.ai/docs/api#toc_15)
+// Entity represents an Entity for the Wit API (https://wit.ai/docs/api#toc_15)
 type Entity struct {
 	Builtin bool          `json:"builtin"`
 	Doc     string        `json:"doc"`
-	Id      string        `json:"id"`
+	ID      string        `json:"id"`
 	Name    string        `json:"name"`
 	Values  []EntityValue `json:"values"`
 }
 
-// Represents a Value within an Entity
+// EntityValue represents a Value within an Entity
 type EntityValue struct {
 	Value       string   `json:"value"`
 	Expressions []string `json:"expressions"`
 }
 
+// Expression respresents the expression
 type Expression struct {
 	Expression string `json:"expression"`
 }
 
-// Represents a slice of entites when returend as an array (https://wit.ai/docs/api#toc_15)
+// Entities represents a slice of entites when returend as an array (https://wit.ai/docs/api#toc_15)
 type Entities []string
 
-// Creates a new entity (https://wit.ai/docs/api#toc_19)
+// CreateEntity creates a new entity (https://wit.ai/docs/api#toc_19)
 //
 //		result, err := client.CreateEntity(entity)
-func (client *WitClient) CreateEntity(entity *Entity) (*Entity, error) {
+func (client *Client) CreateEntity(entity *Entity) (*Entity, error) {
 	data, _ := json.Marshal(entity)
-	result, err := post(client.ApiBase+"/entities", data)
+	result, err := post(client.APIBase+"/entities", data)
 	if err != nil {
 		return nil, err
 	}
@@ -45,12 +46,12 @@ func (client *WitClient) CreateEntity(entity *Entity) (*Entity, error) {
 	return entity, nil
 }
 
-// Creates a new entity value (https://wit.ai/docs/api#toc_25)
+// CreateEntityValue creates a new entity value (https://wit.ai/docs/api#toc_25)
 //
 //		result, err := client.CreateEntityValue("favorite_city, entityValue)
-func (client *WitClient) CreateEntityValue(id string, entityValue *EntityValue) (*Entity, error) {
+func (client *Client) CreateEntityValue(id string, entityValue *EntityValue) (*Entity, error) {
 	data, _ := json.Marshal(entityValue)
-	result, err := post(client.ApiBase+"/entities/"+id+"/values", data)
+	result, err := post(client.APIBase+"/entities/"+id+"/values", data)
 	if err != nil {
 		return nil, err
 	}
@@ -62,12 +63,12 @@ func (client *WitClient) CreateEntityValue(id string, entityValue *EntityValue) 
 	return entity, nil
 }
 
-// Creates a new entity value expression (https://wit.ai/docs/api#toc_25)
+// CreateEntityValueExp creates a new entity value expression (https://wit.ai/docs/api#toc_25)
 //
 //		result, err := client.CreateEntityValueExp("favorite_city", "Barcelona", "Paella")
-func (client *WitClient) CreateEntityValueExp(id string, value string, exp string) (*Entity, error) {
+func (client *Client) CreateEntityValueExp(id string, value string, exp string) (*Entity, error) {
 	jsonData, _ := json.Marshal(&Expression{exp})
-	result, err := post(client.ApiBase+"/entities/"+id+"/values/"+value+"/expressions", jsonData)
+	result, err := post(client.APIBase+"/entities/"+id+"/values/"+value+"/expressions", jsonData)
 	if err != nil {
 		return nil, err
 	}
@@ -79,48 +80,48 @@ func (client *WitClient) CreateEntityValueExp(id string, value string, exp strin
 	return entity, nil
 }
 
-// Deletes an entity (https://wit.ai/docs/api#toc_30)
+// DeleteEntity deletes an entity (https://wit.ai/docs/api#toc_30)
 //
 //		result, err := client.DeleteEntity("favorite_city")
-func (client *WitClient) DeleteEntity(id string) error {
+func (client *Client) DeleteEntity(id string) error {
 	id = url.QueryEscape(id)
-	_, err := delete(client.ApiBase+"/entities", id)
+	_, err := delete(client.APIBase+"/entities", id)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// Deletes an entity's value (https://wit.ai/docs/api#toc_25)
+// DeleteEntityValue deletes an entity's value (https://wit.ai/docs/api#toc_25)
 //
 // 		result, err := client.DeleteEntityValue("favorite_city", "Paris")
-func (client *WitClient) DeleteEntityValue(id string, value string) ([]byte, error) {
+func (client *Client) DeleteEntityValue(id string, value string) ([]byte, error) {
 	id = url.QueryEscape(id)
-	result, err := delete(client.ApiBase+"/entities", id+"/values/"+value)
+	result, err := delete(client.APIBase+"/entities", id+"/values/"+value)
 	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-// Deletes an entity's value's expression (https://wit.ai/docs/api#toc_35)
+// DeleteEntityValueExp deletes an entity's value's expression (https://wit.ai/docs/api#toc_35)
 //
 // 		result, err := client.DeleteEntityValueExp("favorite_city", "Paris", "")
-func (client *WitClient) DeleteEntityValueExp(id string, value string, exp string) ([]byte, error) {
+func (client *Client) DeleteEntityValueExp(id string, value string, exp string) ([]byte, error) {
 	id = url.QueryEscape(id)
 	exp = strings.Replace(url.QueryEscape(exp), "+", "%20", -1)
-	result, err := delete(client.ApiBase+"/entities", id+"/values/"+value+"/expressions/"+exp)
+	result, err := delete(client.APIBase+"/entities", id+"/values/"+value+"/expressions/"+exp)
 	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-// Lists the configured entities (https://wit.ai/docs/api#toc_15)
+// Entities lists the configured entities (https://wit.ai/docs/api#toc_15)
 //
 //		result, err := client.Entities()
-func (client *WitClient) Entities() (*Entities, error) {
-	result, err := get(client.ApiBase + "/entities")
+func (client *Client) Entities() (*Entities, error) {
+	result, err := get(client.APIBase + "/entities")
 	if err != nil {
 		return nil, err
 	}
@@ -128,12 +129,12 @@ func (client *WitClient) Entities() (*Entities, error) {
 	return entities, nil
 }
 
-// Lists a single configured entity (https://wit.ai/docs/api#toc_17)
+// Entity lists a single configured entity (https://wit.ai/docs/api#toc_17)
 //
 //		result, err := client.Entity("wit$temperature")
-func (client *WitClient) Entity(id string) (*Entity, error) {
+func (client *Client) Entity(id string) (*Entity, error) {
 	id = url.QueryEscape(id)
-	result, err := get(client.ApiBase + "/entities/" + id)
+	result, err := get(client.APIBase + "/entities/" + id)
 	if err != nil {
 		return nil, err
 	}
@@ -144,12 +145,12 @@ func (client *WitClient) Entity(id string) (*Entity, error) {
 	return entity, nil
 }
 
-// Updates and entity (https://wit.ai/docs/api#toc_22)
+// UpdateEntity updates and entity (https://wit.ai/docs/api#toc_22)
 //
 //		result, err := client.UpdateEntity(entity)
-func (client *WitClient) UpdateEntity(entity *Entity) ([]byte, error) {
+func (client *Client) UpdateEntity(entity *Entity) ([]byte, error) {
 	data, err := json.Marshal(entity)
-	result, err := put(client.ApiBase+"/entities/"+entity.Id, data)
+	result, err := put(client.APIBase+"/entities/"+entity.ID, data)
 	if err != nil {
 		return nil, err
 	}

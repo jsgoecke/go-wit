@@ -33,7 +33,7 @@ func TestWitIntentsParsing(t *testing.T) {
 	for cnt, intent := range *intents {
 		switch cnt {
 		case 0:
-			if intent.Id != "1234" {
+			if intent.ID != "1234" {
 				t.Error("Intents JSON did not parse properly.")
 			}
 		case 1:

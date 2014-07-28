@@ -7,19 +7,19 @@ import (
 	"encoding/json"
 )
 
-// Represents intents in the Wit API (https://wit.ai/docs/api#toc_13)
+// Intents represents intents in the Wit API (https://wit.ai/docs/api#toc_13)
 type Intents []struct {
-	Id       string `json:"id"`
+	ID       string `json:"id"`
 	Name     string `json:"name"`
 	Doc      string `json:"doc"`
 	Metadata string `json:"metadata"`
 }
 
-// Lists intents configured in the Wit API (https://wit.ai/docs/api#toc_13)
+// Intents lists intents configured in the Wit API (https://wit.ai/docs/api#toc_13)
 //
 //		result, err := client.Intents()
-func (client *WitClient) Intents() (*Intents, error) {
-	result, err := get(client.ApiBase + "/intents")
+func (client *Client) Intents() (*Intents, error) {
+	result, err := get(client.APIBase + "/intents")
 	if err != nil {
 		return nil, err
 	}

@@ -80,7 +80,7 @@ func TestWitEntityParsing(t *testing.T) {
 
 	if entity.Builtin != true ||
 		entity.Doc != "Temperature in degrees Celcius or Fahrenheit" ||
-		entity.Id != "wit$temperature" {
+		entity.ID != "wit$temperature" {
 		t.Error("Message JSON did not parse properly.")
 	}
 }
@@ -149,7 +149,7 @@ func TestCreateEntity(t *testing.T) {
 	if err != nil {
 		t.Error("Did not parse entity properly")
 	}
-	entity.Id = entityName
+	entity.ID = entityName
 	entity, err = client.CreateEntity(entity)
 	if entity.Doc != "A city that I like" {
 		t.Error("Entity was not created properly, doc not set")
@@ -182,7 +182,7 @@ func TestUpdateEntity(t *testing.T) {
 
 	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
 	entity, err := parseEntity([]byte(data))
-	entity.Id = entityName
+	entity.ID = entityName
 	_, err = client.UpdateEntity(entity)
 	if err != nil {
 		t.Error("Did not update entity properly")

@@ -13,17 +13,19 @@ import (
 )
 
 const (
-	USERAGENT   = "WIT (Go net/http)"
-	API_VERSION = "v=20140401"
+	// UserAgent is the HTTP Uesr Agent sent on HTTP requests
+	UserAgent = "WIT (Go net/http)"
+	// APIVersion is the version of the Wit API supported
+	APIVersion = "v=20140401"
 )
 
-// Represents a client for the Wit API (https://wit.ai/docs/api)
-type WitClient struct {
-	ApiBase string
+// Client represents a client for the Wit API (https://wit.ai/docs/api)
+type Client struct {
+	APIBase string
 }
 
-// Represents the HTTP parameters to pass along to the Wit API
-type HttpParams struct {
+// HTTPParams represents the HTTP parameters to pass along to the Wit API
+type HTTPParams struct {
 	Verb        string
 	Resource    string
 	ContentType string
@@ -31,15 +33,15 @@ type HttpParams struct {
 }
 
 // Stores the ApiKey for the Wit API
-var ApiKey string
+var APIKey string
 
-// Creates a NewClient for the Wit API
+// NewClient creates a new client for the Wit API
 //
 //		client := wit.NewClient("<ACCESS-TOKEN>")
-func NewClient(apiKey string) *WitClient {
-	client := &WitClient{}
-	client.ApiBase = "https://api.wit.ai"
-	ApiKey = apiKey
+func NewClient(apiKey string) *Client {
+	client := &Client{}
+	client.APIBase = "https://api.wit.ai"
+	APIKey = apiKey
 	return client
 }
 
@@ -47,7 +49,7 @@ func NewClient(apiKey string) *WitClient {
 //
 //		result, err := delete("https://api.wit.ai/entities", "favorite_city")
 func delete(resource string, id string) ([]byte, error) {
-	httpParams := &HttpParams{}
+	httpParams := &HTTPParams{}
 	httpParams.Resource = resource + "/" + id
 	httpParams.Verb = "DELETE"
 	return processRequest(httpParams)
@@ -57,7 +59,7 @@ func delete(resource string, id string) ([]byte, error) {
 //
 //		result, err := get("https://api.wit.ai/entities/favorite_city")
 func get(resource string) ([]byte, error) {
-	httpParams := &HttpParams{}
+	httpParams := &HTTPParams{}
 	httpParams.Resource = resource
 	httpParams.Verb = "GET"
 	return processRequest(httpParams)
@@ -68,7 +70,7 @@ func get(resource string) ([]byte, error) {
 //
 //		result, err := post("https://api.wit.ai/entities", entity)
 func post(resource string, data []byte) ([]byte, error) {
-	httpParams := &HttpParams{"POST", resource, "application/json", data}
+	httpParams := &HTTPParams{"POST", resource, "application/json", data}
 	return processRequest(httpParams)
 }
 
@@ -86,36 +88,38 @@ func postFile(resource string, request *MessageRequest) ([]byte, error) {
 		if statsErr != nil {
 			return nil, statsErr
 		}
-		var size int64 = stats.Size()
+		size := stats.Size()
 		data := make([]byte, size)
 		file.Read(data)
-		httpParams := &HttpParams{"POST", resource, request.ContentType, data}
+		httpParams := &HTTPParams{"POST", resource, request.ContentType, data}
 		return processRequest(httpParams)
-	} else {
-		if request.FileContents != nil {
-			httpParams := &HttpParams{"POST", resource, request.ContentType, request.FileContents}
-			return processRequest(httpParams)
-		} else {
-			return nil, errors.New("Must provide a filename or contents")
-		}
 	}
+
+	if request.FileContents != nil {
+		httpParams := &HTTPParams{"POST", resource, request.ContentType, request.FileContents}
+		return processRequest(httpParams)
+		// } else {
+		// return nil, errors.New("Must provide a filename or contents")
+	}
+
+	return nil, errors.New("Must provide a filename or contents")
 }
 
 // Provides a common facility for doing a PUT on a Wit resource.
 //
 //		result, err := put("https://api.wit.ai/entities", entity)
 func put(resource string, data []byte) ([]byte, error) {
-	httpParams := &HttpParams{"PUT", resource, "application/json", data}
+	httpParams := &HTTPParams{"PUT", resource, "application/json", data}
 	return processRequest(httpParams)
 }
 
 // Processes an HTTP request to the Wit API
-func processRequest(httpParams *HttpParams) ([]byte, error) {
+func processRequest(httpParams *HTTPParams) ([]byte, error) {
 	regex := regexp.MustCompile(`\?`)
 	if regex.MatchString(httpParams.Resource) {
-		httpParams.Resource += "&" + API_VERSION
+		httpParams.Resource += "&" + APIVersion
 	} else {
-		httpParams.Resource += "?" + API_VERSION
+		httpParams.Resource += "?" + APIVersion
 	}
 	reader := bytes.NewReader(httpParams.Data)
 	httpClient := &http.Client{}
@@ -140,7 +144,7 @@ func processRequest(httpParams *HttpParams) ([]byte, error) {
 //
 //		setHeaders(req, httpParams.ContentType)
 func setHeaders(req *http.Request, contentType string) {
-	req.Header.Add("Authorization", "Bearer "+ApiKey)
+	req.Header.Add("Authorization", "Bearer "+APIKey)
 	req.Header.Set("Content-Type", contentType)
 	req.Header.Set("Accept", "application/json")
 }

@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-var msg_id string
+var msgID string
 
 func TestWitMessageParsing(t *testing.T) {
 	data := `
@@ -49,7 +49,7 @@ func TestWitMessageParsing(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	if message.MsgId != "1234" ||
+	if message.MsgID != "1234" ||
 		message.Outcome.Intent != "query_metrics" ||
 		message.Outcome.Entities.Datetime[0].Body != "Tuesday" {
 		t.Error("Message JSON did not parse properly.")
@@ -68,7 +68,7 @@ func TestWitMessageRequest(t *testing.T) {
 	if result.MsgBody != "Hello world" {
 		t.Error("Did not process properly")
 	}
-	msg_id = result.MsgId
+	msgID = result.MsgID
 }
 
 func TestWitPostAudioMessage(t *testing.T) {
@@ -97,7 +97,7 @@ func TestWitPostAudioContentsMessage(t *testing.T) {
 	if statsErr != nil {
 		t.Error(err)
 	}
-	var size int64 = stats.Size()
+	size := stats.Size()
 	data := make([]byte, size)
 	file.Read(data)
 	request := &MessageRequest{}
@@ -117,11 +117,11 @@ func TestWitMessages(t *testing.T) {
 	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
 	//Wait for the message to be indexed
 	time.Sleep(300 * time.Millisecond)
-	message, err := client.Messages(msg_id)
+	message, err := client.Messages(msgID)
 	if err != nil {
 		t.Error("Message JSON did not parse properly.")
 	} else {
-		if message.MsgId != msg_id {
+		if message.MsgID != msgID {
 			t.Error("Message JSON did not parse properly.")
 		}
 	}
