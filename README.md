@@ -1,25 +1,22 @@
 #go-wit 
+
 [![wercker status](https://app.wercker.com/status/db550f8016d3e02bd1d79d94bccf764b "wercker status")](https://app.wercker.com/project/bykey/db550f8016d3e02bd1d79d94bccf764b)
 
 A Go library for the [Wit.ai](http://wit.ai) API for Natural Language Processing.
 
-Version
--------
+## Version
 
 0.3 
 
-Installation
-------------
+## Installation
 
 	go get github.com/jsgoecke/go-wit
 
-Documentation
--------------
+## Documentation
 
 [http://godoc.org/github.com/jsgoecke/go-wit](http://godoc.org/github.com/jsgoecke/go-wit)
 
-Usage
------
+## Usage
 
 ```go
 package main
@@ -93,19 +90,25 @@ func main() {
 // }
 ```
 
-Testing
--------
+## Testing
 
 Must have the environment variable WIT_ACCESS_TOKEN set to your Wit API token.
-
+	
+	cd go-wit
 	go test
 
-License
--------
+### Test Coverage
+
+[http://gocover.io/github.com/jsgoecke/go-wit](http://gocover.io/github.com/jsgoecke/go-wit)
+
+### Lint
+
+[http://go-lint.appspot.com/github.com/jsgoecke/go-wit](http://go-lint.appspot.com/github.com/jsgoecke/go-wit)
+
+## License
 
 MIT, see LICENSE.txt
 
-Author
-------
+## Author
 
 Jason Goecke [@jsgoecke](http://twitter.com/jsgoecke).
