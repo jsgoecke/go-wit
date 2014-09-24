@@ -103,7 +103,7 @@ func postFile(resource string, request *MessageRequest) ([]byte, error) {
 		// return nil, errors.New("Must provide a filename or contents")
 	}
 
-	return nil, errors.New("Must provide a filename or contents")
+	return nil, errors.New("must provide a filename or contents")
 }
 
 // Provides a common facility for doing a PUT on a Wit resource.
