@@ -6,6 +6,7 @@ package wit
 import (
 	"encoding/json"
 	"net/url"
+	"strconv"
 )
 
 // Message represents a Wit message (https://wit.ai/docs/api#toc_3)
@@ -48,8 +49,13 @@ type DatetimeValue struct {
 
 // MessageRequest represents a request to process a message
 type MessageRequest struct {
-	File, Query, MsgID, ContentType string
-	FileContents                    []byte
+	File         string `json:"file,omitempty"`
+	Query        string `json:"query"`
+	MsgID        string `json:"msg_id,omitempty"`
+	Context      string `json:"context, omitempty"`
+	ContentType  string `json:"contentType, omitempty"`
+	N            int    `json:"n,omitempty"`
+	FileContents []byte `json:"-"`
 	// Are context and Meta necessary anymore?
 	// Context     Context
 	// Meta        map[string]interface{}
@@ -77,7 +83,17 @@ func (client *Client) Messages(id string) (*Message, error) {
 //
 //		result, err := client.Message(request)
 func (client *Client) Message(request *MessageRequest) (*Message, error) {
-	result, err := get(client.APIBase + "/message?q=" + url.QueryEscape(request.Query))
+	query := url.QueryEscape(request.Query)
+	if request.Context != "" {
+		query += "&context=" + request.Context
+	}
+	if request.MsgID != "" {
+		query += "&msg_id" + request.MsgID
+	}
+	if request.N != 0 {
+		query += "&n=" + strconv.Itoa(request.N)
+	}
+	result, err := get(client.APIBase + "/message?q=" + query)
 	if err != nil {
 		return nil, err
 	}
