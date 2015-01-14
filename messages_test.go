@@ -119,7 +119,7 @@ func TestWitMessages(t *testing.T) {
 	time.Sleep(300 * time.Millisecond)
 	message, err := client.Messages(msgID)
 	if err != nil {
-		t.Error("Message JSON did not parse properly.")
+		t.Error(err)
 	} else {
 		if message.MsgID != msgID {
 			t.Error("Message JSON did not parse properly.")

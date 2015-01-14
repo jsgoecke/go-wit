@@ -89,7 +89,7 @@ func TestWitEntities(t *testing.T) {
 	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
 	entities, err := client.Entities()
 	if err != nil {
-		t.Error("Did not fetch entities properly")
+		t.Error(err)
 	}
 
 	ageOfPerson := false
