@@ -11,10 +11,10 @@ import (
 
 // Entity represents an Entity for the Wit API (https://wit.ai/docs/api#toc_15)
 type Entity struct {
-	Builtin bool          `json:"builtin"`
+	Builtin bool          `json:"builtin,omitempty"`
 	Doc     string        `json:"doc"`
 	ID      string        `json:"id"`
-	Name    string        `json:"name"`
+	Name    string        `json:"name,omitempty"`
 	Values  []EntityValue `json:"values"`
 }
 
@@ -36,14 +36,17 @@ type Entities []string
 //
 //		result, err := client.CreateEntity(entity)
 func (client *Client) CreateEntity(entity *Entity) (*Entity, error) {
-	data, _ := json.Marshal(entity)
+	data, err := json.Marshal(entity)
+	if err != nil {
+		return nil, err
+	}
 	result, err := post(client.APIBase+"/entities", data)
 	if err != nil {
 		return nil, err
 	}
 	entity = &Entity{}
 	err = json.Unmarshal(result, entity)
-	return entity, nil
+	return entity, err
 }
 
 // CreateEntityValue creates a new entity value (https://wit.ai/docs/api#toc_25)
@@ -171,18 +174,12 @@ func parseEntities(data []byte) (*Entities, error) {
 func parseEntity(data []byte) (*Entity, error) {
 	entity := &Entity{}
 	err := json.Unmarshal(data, entity)
-	if err != nil {
-		return nil, err
-	}
-	return entity, nil
+	return entity, err
 }
 
 // Parses the Entities Value JSON
 func parseEntityValue(data []byte) (*EntityValue, error) {
 	entityValue := &EntityValue{}
 	err := json.Unmarshal(data, entityValue)
-	if err != nil {
-		return nil, err
-	}
-	return entityValue, nil
+	return entityValue, err
 }

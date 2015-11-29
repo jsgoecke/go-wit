@@ -14,34 +14,57 @@ var msgID string
 func TestWitMessageParsing(t *testing.T) {
 	data := `
 	{
-	   "msg_id":"1234",
-	   "msg_body":"how many people between Tuesday and Friday?",
-	   "outcome":{
-	      "intent":"query_metrics",
-	      "entities":{
-	         "metric":{
-	            "value":"metric_visitors",
-	            "body":"people"
-	         },
-	         "datetime":[
-	            {
-	               "value":{
-	                  "from":"2013-10-21T00:00:00.000Z",
-	                  "to":"2013-10-22T00:00:00.000Z"
-	               },
-	               "body":"Tuesday"
-	            },
-	            {
-	               "value":{
-	                  "from":"2013-10-24T00:00:00.000Z",
-	                  "to":"2013-10-25T00:00:00.000Z"
-	               },
-	               "body":"Friday"
-	            }
-	         ]
-	      },
-	      "confidence":0.979
-	   }
+	  "msg_id" : "2f41839e-2b54-4de2-aa59-fc016c3e58d1",
+	  "_text" : "how many people between Tuesday and Friday?",
+	  "outcomes" : [ {
+	    "_text" : "how many people between Tuesday and Friday?",
+	    "confidence" : 0.522,
+	    "intent" : "query_metrics",
+	    "entities" : {
+	      "datetime" : [ {
+	        "type" : "interval",
+	        "from" : {
+	          "value" : "2015-12-01T00:00:00.000-08:00",
+	          "grain" : "day"
+	        },
+	        "to" : {
+	          "value" : "2015-12-05T00:00:00.000-08:00",
+	          "grain" : "day"
+	        },
+	        "values" : [ {
+	          "type" : "interval",
+	          "from" : {
+	            "value" : "2015-12-01T00:00:00.000-08:00",
+	            "grain" : "day"
+	          },
+	          "to" : {
+	            "value" : "2015-12-05T00:00:00.000-08:00",
+	            "grain" : "day"
+	          }
+	        }, {
+	          "type" : "interval",
+	          "from" : {
+	            "value" : "2015-12-08T00:00:00.000-08:00",
+	            "grain" : "day"
+	          },
+	          "to" : {
+	            "value" : "2015-12-12T00:00:00.000-08:00",
+	            "grain" : "day"
+	          }
+	        }, {
+	          "type" : "interval",
+	          "from" : {
+	            "value" : "2015-12-15T00:00:00.000-08:00",
+	            "grain" : "day"
+	          },
+	          "to" : {
+	            "value" : "2015-12-19T00:00:00.000-08:00",
+	            "grain" : "day"
+	          }
+	        } ]
+	      } ]
+	    }
+	  } ]
 	}`
 
 	message, err := parseMessage([]byte(data))
@@ -49,10 +72,14 @@ func TestWitMessageParsing(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	if message.MsgID != "1234" ||
-		message.Outcome.Intent != "query_metrics" ||
-		message.Outcome.Entities.Datetime[0].Body != "Tuesday" {
-		t.Error("Message JSON did not parse properly.")
+	if message.MsgID != "2f41839e-2b54-4de2-aa59-fc016c3e58d1" {
+		t.Errorf("not equal %s != %s", "2f41839e-2b54-4de2-aa59-fc016c3e58d1", message.MsgID)
+	}
+	if message.Outcomes[0].Intent != "query_metrics" {
+		t.Errorf("not equal %s != %s", "query_metrics", message.Outcomes[0].Intent)
+	}
+	if message.Outcomes[0].Entities["datetime"][0].From.Grain != "day" {
+		t.Errorf("not equal %s != %s", "day", message.Outcomes[0].Entities["datetime"][0].From.Grain)
 	}
 }
 
@@ -64,8 +91,9 @@ func TestWitMessageRequest(t *testing.T) {
 	result, err := client.Message(request)
 	if err != nil {
 		t.Error(err)
+		return
 	}
-	if result.MsgBody != "Hello world" {
+	if result.Text != "Hello world" {
 		t.Error("Did not process properly")
 	}
 	msgID = result.MsgID
@@ -80,7 +108,7 @@ func TestWitPostAudioMessage(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	} else {
-		if message.MsgBody != "hello world" {
+		if message.Text != "hello world" {
 			t.Error("Audio POST did not work properly")
 		}
 	}
@@ -91,6 +119,7 @@ func TestWitPostAudioContentsMessage(t *testing.T) {
 	file, err := os.Open("./audio_sample/helloWorld.wav")
 	if err != nil {
 		t.Error(err)
+		return
 	}
 	defer file.Close()
 	stats, statsErr := file.Stat()
@@ -107,7 +136,7 @@ func TestWitPostAudioContentsMessage(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	} else {
-		if message.MsgBody != "hello world" {
+		if message.Text != "hello world" {
 			t.Error("Audio POST did not work properly")
 		}
 	}
