@@ -90,6 +90,7 @@ func TestWitEntities(t *testing.T) {
 	entities, err := client.Entities()
 	if err != nil {
 		t.Error(err)
+		return
 	}
 
 	ageOfPerson := false
@@ -108,6 +109,7 @@ func TestWitEntity(t *testing.T) {
 	entity, err := client.Entity("wit$age_of_person")
 	if err != nil {
 		t.Error(err)
+		return
 	}
 	if entity.Name != "age_of_person" ||
 		entity.Builtin != true {
@@ -151,6 +153,10 @@ func TestCreateEntity(t *testing.T) {
 	}
 	entity.ID = entityName
 	entity, err = client.CreateEntity(entity)
+	if err != nil {
+		t.Errorf("Error creating entity %s", err.Error())
+		return
+	}
 	if entity.Doc != "A city that I like" {
 		t.Error("Entity was not created properly, doc not set")
 	}
@@ -197,6 +203,7 @@ func TestCreateEntityValue(t *testing.T) {
 	entity, err := client.CreateEntityValue(entityName, entityValue)
 	if err != nil {
 		t.Error(err)
+		return
 	}
 	barcelona, found := findEntityValue(entity, "Barcelona")
 	if !found || barcelona.Value != "Barcelona" {
@@ -213,6 +220,7 @@ func TestCreateEntityValueExp(t *testing.T) {
 	entity, err := client.CreateEntityValueExp(entityName, "Barcelona", "Paella")
 	if err != nil {
 		t.Error(err)
+		return
 	}
 	barcelona, found := findEntityValue(entity, "Barcelona")
 	if !found || barcelona.Value != "Barcelona" {
@@ -229,6 +237,7 @@ func TestDeleteEntityValueExp(t *testing.T) {
 	_, err := client.DeleteEntityValueExp(entityName, "Paris", "City of Light")
 	if err != nil {
 		t.Error(err)
+		return
 	}
 }
 
@@ -243,11 +252,15 @@ func TestDeleteEntityValue(t *testing.T) {
 func TestDeleteEntity(t *testing.T) {
 	client := NewClient(os.Getenv("WIT_ACCESS_TOKEN"))
 	err := client.DeleteEntity("favorite_city")
+	if err == nil {
+		t.FailNow()
+	}
 	if err.Error() != http.StatusText(404) {
 		t.Error("Delete should have returned 'Entity not found'")
 	}
 	err = client.DeleteEntity(entityName)
 	if err != nil {
 		t.Error(err)
+		return
 	}
 }

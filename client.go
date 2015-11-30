@@ -6,8 +6,11 @@ package wit
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"net/http/httputil"
 	"os"
 	"regexp"
 )
@@ -16,7 +19,7 @@ const (
 	// UserAgent is the HTTP Uesr Agent sent on HTTP requests
 	UserAgent = "WIT (Go net/http)"
 	// APIVersion is the version of the Wit API supported
-	APIVersion = "v=20140401"
+	APIVersion = "v=20151127"
 )
 
 // Client represents a client for the Wit API (https://wit.ai/docs/api)
@@ -129,10 +132,20 @@ func processRequest(httpParams *HTTPParams) ([]byte, error) {
 		return nil, err
 	}
 	setHeaders(req, httpParams.ContentType)
+
+	if os.Getenv("GOWIT_DEBUG") == "true" {
+		debug(httputil.DumpRequestOut(req, true))
+	}
+
 	result, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
+
+	if os.Getenv("GOWIT_DEBUG") == "true" {
+		debug(httputil.DumpResponse(result, true))
+	}
+
 	body, err := ioutil.ReadAll(result.Body)
 	result.Body.Close()
 	if result.StatusCode != 200 {
@@ -148,4 +161,16 @@ func setHeaders(req *http.Request, contentType string) {
 	req.Header.Add("Authorization", "Bearer "+APIKey)
 	req.Header.Set("Content-Type", contentType)
 	req.Header.Set("Accept", "application/json")
+}
+
+func debug(data []byte, err error) {
+	if err == nil {
+		if len(data) > 1000 {
+			fmt.Printf("DATA TOO LARGE %d\n\n", len(data))
+		} else {
+			fmt.Printf("%s\n\n", data)
+		}
+	} else {
+		log.Fatalf("%s\n\n", err)
+	}
 }

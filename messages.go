@@ -11,40 +11,45 @@ import (
 
 // Message represents a Wit message (https://wit.ai/docs/api#toc_3)
 type Message struct {
-	MsgID   string  `json:"msg_id"`
-	MsgBody string  `json:"msg_body"`
-	Outcome Outcome `json:"outcome"`
+	MsgID    string    `json:"msg_id"`
+	Text     string    `json:"_text"`
+	Outcomes []Outcome `json:"outcomes"`
 }
 
 // Outcome represents the outcome portion of a Wit message
 type Outcome struct {
-	Intent     string        `json:"intent"`
-	Entities   MessageEntity `json:"entities"`
-	Confidence float32       `json:"confidence"`
+	Text       string                     `json:"_text"`
+	Intent     string                     `json:"intent"`
+	IntentId   string                     `json:"intent_id"`
+	Entities   map[string][]MessageEntity `json:"entities"`
+	Confidence float32                    `json:"confidence"`
 }
 
 // MessageEntity represents the entity portion of a Wit message
 type MessageEntity struct {
-	Metric   Metric     `json:"metric"`
-	Datetime []Datetime `json:"datetime"`
-}
-
-// Metric represents the metric portion of a Wit message
-type Metric struct {
-	Value string `json:"value"`
-	Body  string `json:"value"`
-}
-
-// Datetime represents the datetime portion of a Wit message
-type Datetime struct {
-	Value DatetimeValue `json:"value"`
-	Body  string        `json:"body"`
+	Metadata *string              `json:"metadata,omitempty"`
+	Value    *interface{}         `json:"value,omitempty"`
+	Grain    *string              `json:"grain,omitempty"`
+	Type     *string              `json:"type,omitempty"`
+	Unit     *string              `json:"unit,omitempty"`
+	Body     *string              `json:"body,omitempty"`
+	Entity   *string              `json:"entity,omitempty"`
+	Start    *int64               `json:"start,omitempty"`
+	End      *int64               `json:"end,omitempty"`
+	Values   *[]interface{}       `json:"values,omitempty"`
+	From     *DatetimeIntervalEnd `json:"from,omitempty"`
+	To       *DatetimeIntervalEnd `json:"to,omitempty"`
 }
 
 // DatetimeValue represents the datetime value portion of a Wit message
 type DatetimeValue struct {
-	From string `json:"from"`
-	To   string `json:"to"`
+	From DatetimeIntervalEnd `json:"from"`
+	To   DatetimeIntervalEnd `json:"to"`
+}
+
+type DatetimeIntervalEnd struct {
+	Value string `json:"value"`
+	Grain string `json:"grain"`
 }
 
 // MessageRequest represents a request to process a message
