@@ -18,20 +18,10 @@ func TestWitMessageParsing(t *testing.T) {
 	  "_text" : "how many people between Tuesday and Friday?",
 	  "outcomes" : [ {
 	    "_text" : "how many people between Tuesday and Friday?",
-	    "confidence" : 0.522,
 	    "intent" : "query_metrics",
 	    "entities" : {
-	      "datetime" : [ {
-	        "type" : "interval",
-	        "from" : {
-	          "value" : "2015-12-01T00:00:00.000-08:00",
-	          "grain" : "day"
-	        },
-	        "to" : {
-	          "value" : "2015-12-05T00:00:00.000-08:00",
-	          "grain" : "day"
-	        },
-	        "values" : [ {
+        "intent": [
+	        "datetime" : [ {
 	          "type" : "interval",
 	          "from" : {
 	            "value" : "2015-12-01T00:00:00.000-08:00",
@@ -40,30 +30,41 @@ func TestWitMessageParsing(t *testing.T) {
 	          "to" : {
 	            "value" : "2015-12-05T00:00:00.000-08:00",
 	            "grain" : "day"
-	          }
-	        }, {
-	          "type" : "interval",
-	          "from" : {
-	            "value" : "2015-12-08T00:00:00.000-08:00",
-	            "grain" : "day"
 	          },
-	          "to" : {
-	            "value" : "2015-12-12T00:00:00.000-08:00",
-	            "grain" : "day"
-	          }
-	        }, {
-	          "type" : "interval",
-	          "from" : {
-	            "value" : "2015-12-15T00:00:00.000-08:00",
-	            "grain" : "day"
-	          },
-	          "to" : {
-	            "value" : "2015-12-19T00:00:00.000-08:00",
-	            "grain" : "day"
-	          }
-	        } ]
-	      } ]
-	    }
+	          "values" : [ {
+	            "type" : "interval",
+	            "from" : {
+	              "value" : "2015-12-01T00:00:00.000-08:00",
+	              "grain" : "day"
+	            },
+	            "to" : {
+	              "value" : "2015-12-05T00:00:00.000-08:00",
+	              "grain" : "day"
+	            }
+	          }, {
+	            "type" : "interval",
+	            "from" : {
+	              "value" : "2015-12-08T00:00:00.000-08:00",
+	              "grain" : "day"
+	            },
+	            "to" : {
+	              "value" : "2015-12-12T00:00:00.000-08:00",
+	              "grain" : "day"
+	            }
+	          }, {
+	            "type" : "interval",
+	            "from" : {
+	              "value" : "2015-12-15T00:00:00.000-08:00",
+	              "grain" : "day"
+	            },
+	            "to" : {
+	              "value" : "2015-12-19T00:00:00.000-08:00",
+	              "grain" : "day"
+	            }
+	          } ]
+	        } ],
+	      "confidence" : 0.522
+      ] },
 	  } ]
 	}`
 

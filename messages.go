@@ -22,7 +22,6 @@ type Outcome struct {
 	Intent     string                     `json:"intent"`
 	IntentId   string                     `json:"intent_id"`
 	Entities   map[string][]MessageEntity `json:"entities"`
-	Confidence float32                    `json:"confidence"`
 }
 
 // MessageEntity represents the entity portion of a Wit message
@@ -39,6 +38,7 @@ type MessageEntity struct {
 	Values   *[]interface{}       `json:"values,omitempty"`
 	From     *DatetimeIntervalEnd `json:"from,omitempty"`
 	To       *DatetimeIntervalEnd `json:"to,omitempty"`
+	Confidence float32                    `json:"confidence"`
 }
 
 // DatetimeValue represents the datetime value portion of a Wit message

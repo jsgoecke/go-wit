@@ -66,26 +66,33 @@ func main() {
 // json:
 // {
 //     "msg_id": "76f1c370-bd92-417f-8cb3-e1419d1a9cb3",
-//     "msg_body": "Hello world",
+//     "_text": "Hello world",
 //     "outcome": {
-//         "intent": "hello",
+//         "_text": "Hello world",
+//         "intent": "default_intent",
+//         "intent_id": "",
 //         "entities": {
-//             "metric": {},
-//             "datetime": null
-//         },
-//         "confidence": 0.996
-//     }
+//             "intent": [
+//                 {
+//                     "value": "greetings",
+//                     "confidence": 0.5108957
+//                 }
+//             ]
+//         }
+//      }
 // }
 // {
 //     "msg_id": "322f9b61-0f75-4953-a392-f8eca058a12f",
-//     "msg_body": "hello world",
+//     "_text": "hello world",
 //     "outcome": {
-//         "intent": "hello",
+//         "intent": "default_intent",
+//         "_text": "hello world",
 //         "entities": {
-//             "metric": {},
-//             "datetime": null
-//         },
-//         "confidence": 0.993
+//             "intent": [
+//               "value": "greetings",
+//               "confidence":  0.5108957
+//             ]
+//         }
 //     }
 // }
 ```
